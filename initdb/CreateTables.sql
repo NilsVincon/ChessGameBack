@@ -24,3 +24,12 @@ CREATE TABLE Play
     CONSTRAINT fk_user1 FOREIGN KEY (user1) REFERENCES ChessUser(id),
     CONSTRAINT fk_user2 FOREIGN KEY (user2) REFERENCES ChessUser(id)
 );
+
+CREATE TABLE Friendship (
+                            id SERIAL PRIMARY KEY,
+                            friend1 BIGINT,
+                            friend2 BIGINT,
+                            FOREIGN KEY (friend1) REFERENCES ChessUser(id) ON DELETE CASCADE,
+                            FOREIGN KEY (friend2) REFERENCES ChessUser(id) ON DELETE CASCADE,
+                            UNIQUE (friend1, friend2)
+);
