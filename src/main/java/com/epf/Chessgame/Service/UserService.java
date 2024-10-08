@@ -23,8 +23,8 @@ public class UserService {
         return userDAO.findById(id).orElse(null);
     }
 
-    public User createUser(User user) {
-        return userDAO.save(user);
+    public void createUser(User user) {
+        userDAO.save(user);
     }
 
     public User updateUser(User user) {

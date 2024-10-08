@@ -7,26 +7,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Time;
+import java.util.Date;
+import java.util.List;
 
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "chessuser")
-public class User {
+@Table
+public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
-    private String password;
+    private Date game_date;
+    private Time game_time;
+    @OneToOne
+    @JoinColumn(name = "winner")
+    private User winner;
 
-    public User(String username, String password) {
-    }
-
-    @Override
-    public String toString() {
-        return username;
-    }
 }
-

@@ -1,32 +1,32 @@
 package com.epf.Chessgame.Model;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "chessuser")
-public class User {
+@Table
+public class Play {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
-    private String password;
 
-    public User(String username, String password) {
-    }
+    @ManyToOne
+    @JoinColumn(name = "id_game")
+    private Game game;
 
-    @Override
-    public String toString() {
-        return username;
-    }
+    @OneToOne
+    @JoinColumn(name = "user1")
+    private User user1;
+
+    @OneToOne
+    @JoinColumn(name = "user2")
+    private User user2;
+
 }
-
