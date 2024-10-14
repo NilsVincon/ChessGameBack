@@ -33,6 +33,10 @@ public class UserService {
     public boolean existsByUsername(String username) {
         return userDAO.existsByUsername(username);
     }
+
+    public User findUserByUsername(String username) {
+        return userDAO.findUserByUsername(username);
+    }
     public User updateUser(User user) {
         return userDAO.save(user);
     }

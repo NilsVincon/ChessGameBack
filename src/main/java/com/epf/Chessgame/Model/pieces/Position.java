@@ -1,10 +1,19 @@
 package com.epf.Chessgame.Model.pieces;
 
 
-import java.util.Objects;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.Objects;
+@Setter
+@Getter
+@Embeddable
 public class Position {
+    @Column
     private int row;
+    @Column
     private int column;
 
     public Position(int row, int column) {
@@ -12,20 +21,7 @@ public class Position {
         this.column = column;
     }
 
-    public int getRow() {
-        return row;
-    }
-
-    public void setRow(int row) {
-        this.row = row;
-    }
-
-    public int getColumn() {
-        return column;
-    }
-
-    public void setColumn(int column) {
-        this.column = column;
+    public Position() {
     }
 
     @Override

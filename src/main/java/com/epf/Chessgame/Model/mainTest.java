@@ -1,5 +1,4 @@
 package com.epf.Chessgame.Model;
-
 import com.epf.Chessgame.Model.pieces.ColorPiece;
 import com.epf.Chessgame.Model.pieces.Piece;
 import com.epf.Chessgame.Model.pieces.Position;

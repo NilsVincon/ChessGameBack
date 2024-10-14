@@ -7,7 +7,6 @@ import java.util.Objects;
 
 
 public abstract class Piece {
-
     protected ColorPiece color;
     protected Position position;
 

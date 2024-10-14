@@ -3,8 +3,6 @@ package com.epf.Chessgame.Model.pieces;
 import com.epf.Chessgame.Model.Board;
 
 public class Knight extends Piece {
-
-
     public Knight(ColorPiece color, Position position) {
         super(color, position);
     }

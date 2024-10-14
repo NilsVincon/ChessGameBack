@@ -4,7 +4,6 @@ package com.epf.Chessgame.Model.pieces;
 import com.epf.Chessgame.Model.Board;
 
 public class Pawn extends Piece {
-
     public Pawn(ColorPiece color, Position position) {
         super(color, position);
     }

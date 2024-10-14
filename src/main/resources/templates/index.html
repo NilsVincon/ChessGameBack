@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jeu d'Échecs</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+  <style>
+    table {
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    td {
+      width: 60px;
+      height: 60px;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .white {
+      background-color: #fff;
+    }
+    .black {
+      background-color: #ccc;
+    }
+  </style>
+</head>
+<body>
+<h1>Jeu d'Échecs</h1>
+<div id="chessboard"></div>
+<div>
+  <input type="text" id="message" placeholder="Entrez votre message">
+  <button id="sendButton">Envoyer</button>
+</div>
+<div id="messages"></div>
+
+<script>
+  // Établir la connexion WebSocket
+  const socket = new SockJS('/ws');
+  const stompClient = Stomp.over(socket);
+
+  stompClient.connect({}, function (frame) {
+    console.log('Connecté: ' + frame);
+    stompClient.subscribe('/topic/moves', function (move) {
+      handleMove(move.body);
+    });
+    stompClient.subscribe('/topic/messages', function (message) {
+      displayMessage(message.body);
+    });
+  });
+
+  function saveBoardState() {
+    localStorage.setItem('chessBoard', JSON.stringify(board));
+  }
+
+  // Envoyer un message au serveur
+  document.getElementById('sendButton').onclick = function () {
+    const message = document.getElementById('message').value;
+    stompClient.send("/app/message", {}, message);
+    document.getElementById('message').value = '';
+  };
+
+  // Afficher les messages reçus
+  function displayMessage(message) {
+    const messagesDiv = document.getElementById('messages');
+    const messageElement = document.createElement('div');
+    messageElement.innerText = message;
+    messagesDiv.appendChild(messageElement);
+  }
+  const board = loadBoardState();
+
+  function loadBoardState() {
+    const savedBoard = localStorage.getItem('chessBoard');
+    if (savedBoard) {
+      return JSON.parse(savedBoard);
+    }
+    return [
+      ['T', 'C', 'F', 'D', 'R', 'F', 'C', 'T'],
+      ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+      ['t', 'c', 'f', 'd', 'r', 'f', 'c', 't']
+    ];
+  }
+
+  let selectedPiece = null;
+  let selectedCell = null;
+
+  // Fonction pour dessiner l'échiquier
+  function drawBoard() {
+    chessboard.innerHTML = '';
+    for (let i = 0; i < 8; i++) {
+      const row = document.createElement('tr');
+      for (let j = 0; j < 8; j++) {
+        const cell = document.createElement('td');
+        cell.className = (i + j) % 2 === 0 ? 'white' : 'black';
+        cell.innerText = board[i][j];
+        cell.dataset.position = `${i},${j}`; // Ajout de la position à la cellule
+        cell.onclick = () => cellClicked(i, j);
+        row.appendChild(cell);
+      }
+      chessboard.appendChild(row);
+    }
+  }
+
+  // Fonction appelée lorsqu'une cellule est cliquée
+  function cellClicked(i, j) {
+    if (selectedPiece) {
+      // Déplacer la pièce
+      const move = `${selectedCell[0]},${selectedCell[1]}->${i},${j}`; // Format du mouvement
+      board[i][j] = selectedPiece;
+      board[selectedCell[0]][selectedCell[1]] = ' '; // Vider la case d'origine
+      stompClient.send("/app/move", {}, move); // Envoyer le mouvement via WebSocket
+      selectedPiece = null;
+
+      // Sauvegarder l'état de l'échiquier
+      saveBoardState();
+    } else {
+      // Sélectionner la pièce
+      selectedPiece = board[i][j];
+      selectedCell = [i, j]; // Enregistrer la cellule sélectionnée
+      board[i][j] = ' '; // Vider la case d'origine
+    }
+    drawBoard(); // Redessiner l'échiquier
+  }
+
+  // Gérer le mouvement reçu via WebSocket
+  function handleMove(move) {
+    const [from, to] = move.split('->'); // Extraire les positions
+    const [fromRow, fromCol] = from.split(',').map(Number);
+    const [toRow, toCol] = to.split(',').map(Number);
+
+    board[toRow][toCol] = board[fromRow][fromCol];
+    board[fromRow][fromCol] = ' ';
+
+    drawBoard();
+  }
+
+  drawBoard();
+</script>
+</body>
+</html>

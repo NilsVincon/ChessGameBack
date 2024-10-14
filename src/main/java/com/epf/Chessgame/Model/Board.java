@@ -4,7 +4,6 @@ import com.epf.Chessgame.Model.pieces.*;
 
 
 public class Board {
-
     private Piece[][] chessboard;
 
     public Board() {
@@ -90,7 +89,6 @@ public class Board {
             chessboard[start.getRow()][start.getColumn()] = null;
         }
     }
-
    public Piece getPieceAt(Position pos){
        return chessboard[pos.getRow()][pos.getColumn()];
    }
@@ -165,6 +163,3 @@ public class Board {
     }
 
 }
-
-
-

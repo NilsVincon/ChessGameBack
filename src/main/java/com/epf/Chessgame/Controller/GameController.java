@@ -35,33 +35,25 @@ public class GameController {
     public Iterable<Game> index() {
         return gameService.getGames();
     }
-
-/*    @PostMapping("/add")
-    public ResponseEntity<String> AddGame(@RequestBody Game game) {
-        try {
-            gameService.createGame(game);
-            return ResponseEntity.ok("Partie ajouté avec succès");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'ajout de la partie" + e.getMessage());
-        }
-    }*/
-
     @PostMapping("/endGame")
     public ResponseEntity<String> endGame(@RequestBody WinnerRequest winnerRequest) {
         try {
-            //TODO VERIFIER QUE LA PARTIE EST PAS DEJA TERMINE ET EST BIEN EN COURS, VERIFIER LE WINNER EST BIEN UN DES JOUEURS
-            log.info("Winner : "+winnerRequest.getWinnerId()+" Game : "+winnerRequest.getGameId());
             User winner = userService.getUser(winnerRequest.getWinnerId());
             Game game = gameService.getGame(winnerRequest.getGameId());
-            game.endGame(winner);
-            gameService.updateGame(game);
-            Play playToDelete =playService.findPlayByGameId(game.getId());
-            playService.deletePlay(playToDelete.getId());
-            return ResponseEntity.ok("Partie ajouté avec succès");
+            Play play = playService.findPlayByGameId(game.getId());
+            if (game.getStatus().equals(GameStatus.TERMINEE) || game.getStatus().equals(GameStatus.A_VENIR)) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("La partie n'est pas en cours");
+            }
+            if (play.getReceiver().equals(winner) || play.getSender().equals(winner)) {
+                game.endGame(winner);
+                gameService.updateGame(game);
+                playService.deletePlay(play.getId());
+                return ResponseEntity.ok("Partie terminée avec succès");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Le gagnant n'est pas un des joueurs de la partie");
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'ajout de la partie" + e.getMessage());
         }
     }
-
-
 }

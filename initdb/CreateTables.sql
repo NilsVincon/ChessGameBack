@@ -29,6 +29,14 @@ CREATE TABLE Play
 
 );
 
+CREATE TABLE Move (
+                      id SERIAL PRIMARY KEY,
+                      initial_row INT NOT NULL,  -- Coordonnée X de la position initiale
+                      initial_column INT NOT NULL,  -- Coordonnée Y de la position initiale
+                      final_row INT NOT NULL,    -- Coordonnée X de la position finale
+                      final_colomn INT NOT NULL      -- Coordonnée Y de la position finale
+);
+
 CREATE TABLE Friendship (
                             id SERIAL PRIMARY KEY,
                             friend1 BIGINT,

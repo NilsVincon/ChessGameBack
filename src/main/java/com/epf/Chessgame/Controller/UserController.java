@@ -23,8 +23,13 @@ public class UserController {
         return userService.getUsers();
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<String> AddUser(@RequestBody User user) {
+    @GetMapping("/signup")
+    public String signUpPage() {
+        return "signup";
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<String> SignUp(@ModelAttribute User user) {
         log.info("Username : "+user.getUsername()+" Password : "+user.getPassword());
         try {
             if (userService.existsByUsername(user.getUsername())) {
@@ -38,6 +43,28 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'ajout de l'utilisateur" + e.getMessage());
         }
+    }
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
+    }
 
+    @PostMapping("/login")
+    public ResponseEntity<String> logIn(@ModelAttribute User user) {
+        try {
+            log.info("Username : "+user.getUsername()+" Password : "+user.getPassword());
+            if (!userService.existsByUsername(user.getUsername())) {
+                log.info("Cet utilisateur n'existe pas");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Cet utilisateur n'existe pas");
+            }
+            if (!user.getPassword().equals(userService.findUserByUsername(user.getUsername()).getPassword())) {
+                log.info("Mot de passe incorrect");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Mot de passe incorrect");
+            }
+            log.info("Connexion réussie");
+            return ResponseEntity.ok("Connexion réussie");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la connexion" + e.getMessage());
+        }
     }
 }

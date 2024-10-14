@@ -4,8 +4,6 @@ package com.epf.Chessgame.Model.pieces;
 import com.epf.Chessgame.Model.Board;
 
 public class Bishop extends Piece {
-
-
     public Bishop(ColorPiece color, Position position) {
         super(color, position);
     }
@@ -14,6 +12,7 @@ public class Bishop extends Piece {
     public String toString() {
         return getColor() == ColorPiece.WHITE ? "F" : "f";
     }
+
     public boolean isValidMove(Position newPosition, Board chessboard) {
         int rowDiff = Math.abs(newPosition.getRow() - position.getRow());
         int colDiff = Math.abs(newPosition.getColumn() - position.getColumn());

@@ -5,7 +5,6 @@ import com.epf.Chessgame.Model.Board;
 
 public class Rook extends Piece {
 
-
     public Rook(ColorPiece color, Position position) {
         super(color, position);
     }
