@@ -11,18 +11,22 @@ CREATE TABLE Game
     game_date DATE,
     game_time TIME,
     winner BIGINT,
-    CONSTRAINT fk_winner FOREIGN KEY (winner) REFERENCES ChessUser(id)
+    status VARCHAR(20),
+    CONSTRAINT fk_winner FOREIGN KEY (winner) REFERENCES ChessUser(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Play
 (
     id SERIAL PRIMARY KEY,
     id_game BIGINT,
-    user1 BIGINT,
-    user2 BIGINT,
+    sender BIGINT,
+    receiver BIGINT,
+    status VARCHAR(20),
+
     CONSTRAINT fk_game FOREIGN KEY (id_game) REFERENCES Game(id),
-    CONSTRAINT fk_user1 FOREIGN KEY (user1) REFERENCES ChessUser(id),
-    CONSTRAINT fk_user2 FOREIGN KEY (user2) REFERENCES ChessUser(id)
+    CONSTRAINT fk_sender FOREIGN KEY (sender) REFERENCES ChessUser(id) ON DELETE CASCADE,
+    CONSTRAINT fk_receiver FOREIGN KEY (receiver) REFERENCES ChessUser(id) ON DELETE CASCADE
+
 );
 
 CREATE TABLE Friendship (

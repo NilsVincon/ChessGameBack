@@ -1,14 +1,13 @@
 package com.epf.Chessgame.Model;
 
+import com.epf.Chessgame.Enum.InvitationStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table
@@ -22,11 +21,20 @@ public class Play {
     private Game game;
 
     @OneToOne
-    @JoinColumn(name = "user1")
-    private User user1;
+    @JoinColumn(name = "sender")
+    private User sender;
 
     @OneToOne
-    @JoinColumn(name = "user2")
-    private User user2;
+    @JoinColumn(name = "receiver")
+    private User receiver;
 
+    @Enumerated(EnumType.STRING)
+    private InvitationStatus status;
+
+    public Play(Game game, User sender, User receiver) {
+        this.game = game;
+        this.sender = sender;
+        this.receiver = receiver;
+        this.status = InvitationStatus.EN_ATTENTE;
+    }
 }

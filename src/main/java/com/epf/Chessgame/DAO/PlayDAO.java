@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PlayDAO extends CrudRepository<Play,Long> {
+    Play findPlayByGameId(Long gameId);
 }

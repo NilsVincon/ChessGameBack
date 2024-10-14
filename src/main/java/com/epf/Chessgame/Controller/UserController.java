@@ -9,9 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 @Slf4j
 @RequestMapping("/user")
@@ -30,6 +27,12 @@ public class UserController {
     public ResponseEntity<String> AddUser(@RequestBody User user) {
         log.info("Username : "+user.getUsername()+" Password : "+user.getPassword());
         try {
+            if (userService.existsByUsername(user.getUsername())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Ce nom d'utilisateur est déjà pris");
+            }
+            if (!userService.validPassword(user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Votre mot de passe doit contenir au moins 8 caractères");
+            }
             userService.createUser(user);
             return ResponseEntity.ok("Utilisateur ajouté avec succès");
         } catch (Exception e) {

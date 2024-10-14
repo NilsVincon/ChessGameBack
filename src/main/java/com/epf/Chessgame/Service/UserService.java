@@ -27,6 +27,12 @@ public class UserService {
         userDAO.save(user);
     }
 
+    public boolean validPassword(String password){
+        return password.length() >= 8;
+    }
+    public boolean existsByUsername(String username) {
+        return userDAO.existsByUsername(username);
+    }
     public User updateUser(User user) {
         return userDAO.save(user);
     }

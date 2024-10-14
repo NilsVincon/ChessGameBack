@@ -2,6 +2,7 @@ package com.epf.Chessgame.Service;
 
 import com.epf.Chessgame.DAO.FriendshipDAO;
 import com.epf.Chessgame.Model.Friendship;
+import com.epf.Chessgame.Model.User;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,8 +31,14 @@ public class FriendshipService {
         return friendshipDAO.save(friendship);
     }
 
-    public void deleteFriendship(Long id) {
-        friendshipDAO.deleteById(id);
+    public void deleteFriendship(Long id) {friendshipDAO.deleteById(id);}
+
+    public boolean areFriends(User user1, User user2) {
+        return friendshipDAO.areFriends(user1, user2);
+    }
+
+    public Friendship findFriendshipByUser(User friend1, User friend2) {
+        return friendshipDAO.findByFriend1AndFriend2(friend1, friend2).orElse(null);
     }
 
 }

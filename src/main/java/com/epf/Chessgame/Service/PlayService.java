@@ -20,8 +20,8 @@ public class PlayService {
         return playDAO.findById(id).orElse(null);
     }
 
-    public Play createPlay(Play play) {
-        return playDAO.save(play);
+    public void createPlay(Play play) {
+        playDAO.save(play);
     }
 
     public Play updatePlay(Play play) {
@@ -29,6 +29,10 @@ public class PlayService {
     }
     public void deletePlay(Long id) {
         playDAO.deleteById(id);
+    }
+
+    public Play findPlayByGameId(Long gameId) {
+        return playDAO.findPlayByGameId(gameId);
     }
 }
 
