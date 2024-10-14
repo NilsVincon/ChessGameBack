@@ -3,11 +3,11 @@ package com.epf.Chessgame.Model.pieces;
 
 import java.util.Objects;
 
-public class position {
+public class Position {
     private int row;
     private int column;
 
-    public position(int row, int column) {
+    public Position(int row, int column) {
         this.row = row;
         this.column = column;
     }
@@ -31,7 +31,7 @@ public class position {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof position position)) return false;
+        if (!(o instanceof Position position)) return false;
         return getRow() == position.getRow() && getColumn() == position.getColumn();
     }
 

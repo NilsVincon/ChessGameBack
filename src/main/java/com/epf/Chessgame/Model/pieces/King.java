@@ -1,26 +1,24 @@
 package com.epf.Chessgame.Model.pieces;
 
-import com.epf.Chessgame.Model.board;
 
-public class knight extends piece {
+import com.epf.Chessgame.Model.Board;
 
+public class King extends Piece {
 
-    public knight(colorPiece color, position position) {
+    public King(ColorPiece color, Position position) {
         super(color, position);
     }
 
     @Override
     public String toString() {
-        return getColor() == colorPiece.WHITE ? "C" : "c";
+        return getColor() == ColorPiece.WHITE ? "R" : "r";
     }
-
-    public boolean isValidMove(position newPosition, board chessboard) {
-
+    public boolean isValidMove(Position newPosition, Board chessboard) {
         int rowDiff = Math.abs(newPosition.getRow() - position.getRow());
         int colDiff = Math.abs(newPosition.getColumn() - position.getColumn());
-        piece destinationPiece = chessboard.getPieceAt(newPosition);
+        Piece destinationPiece = chessboard.getPieceAt(newPosition);
 
-        if (colDiff == 1 && rowDiff == 2 || colDiff == 2 && rowDiff == 1) {
+        if (colDiff <=1 && rowDiff<=1) {
             if (destinationPiece == null) {
                 return true;
             } else if (destinationPiece.getColor() != this.getColor()) {
@@ -28,8 +26,7 @@ public class knight extends piece {
             }
         }
 
-
         return false;
     }
+    }
 
-}

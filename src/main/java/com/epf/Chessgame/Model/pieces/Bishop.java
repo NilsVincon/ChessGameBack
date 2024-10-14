@@ -1,23 +1,23 @@
 package com.epf.Chessgame.Model.pieces;
 
 
-import com.epf.Chessgame.Model.board;
+import com.epf.Chessgame.Model.Board;
 
-public class bishop extends piece {
+public class Bishop extends Piece {
 
 
-    public bishop(colorPiece color, position position) {
+    public Bishop(ColorPiece color, Position position) {
         super(color, position);
     }
 
     @Override
     public String toString() {
-        return getColor() == colorPiece.WHITE ? "F" : "f";
+        return getColor() == ColorPiece.WHITE ? "F" : "f";
     }
-    public boolean isValidMove(position newPosition, board chessboard) {
+    public boolean isValidMove(Position newPosition, Board chessboard) {
         int rowDiff = Math.abs(newPosition.getRow() - position.getRow());
         int colDiff = Math.abs(newPosition.getColumn() - position.getColumn());
-        piece destinationPiece = chessboard.getPieceAt(newPosition);
+        Piece destinationPiece = chessboard.getPieceAt(newPosition);
 
         int rowStep = newPosition.getRow() > position.getRow() ? 1 : -1;
         int colStep = newPosition.getColumn() > position.getColumn() ? 1 : -1;
@@ -28,7 +28,7 @@ public class bishop extends piece {
         }
 
         for (int i = 1; i <= steps; i++) {
-            if (chessboard.getPieceAt(new position(position.getRow() + i * rowStep, position.getColumn() + i * colStep)) != null) {
+            if (chessboard.getPieceAt(new Position(position.getRow() + i * rowStep, position.getColumn() + i * colStep)) != null) {
                 return false;
             }
         }

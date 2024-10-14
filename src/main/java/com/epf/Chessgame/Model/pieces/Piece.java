@@ -1,43 +1,43 @@
 package com.epf.Chessgame.Model.pieces;
 
 
-import com.epf.Chessgame.Model.board;
+import com.epf.Chessgame.Model.Board;
 
 import java.util.Objects;
 
 
-public abstract class piece {
+public abstract class Piece {
 
-    protected colorPiece color;
-    protected position position;
+    protected ColorPiece color;
+    protected Position position;
 
-    public piece(colorPiece color, com.epf.Chessgame.Model.pieces.position position) {
+    public Piece(ColorPiece color, Position position) {
         this.color = color;
         this.position = position;
     }
 
 
 
-    public colorPiece getColor() {
+    public ColorPiece getColor() {
         return color;
     }
 
-    public void setColor(colorPiece color) {
+    public void setColor(ColorPiece color) {
         this.color = color;
     }
 
-    public com.epf.Chessgame.Model.pieces.position getPosition() {
+    public Position getPosition() {
         return position;
     }
 
-    public void setPosition(com.epf.Chessgame.Model.pieces.position position) {
+    public void setPosition(Position position) {
         this.position = position;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof piece piece)) return false;
+        if (!(o instanceof Piece piece)) return false;
         return getColor() == piece.getColor() && Objects.equals(getPosition(), piece.getPosition());
     }
 
@@ -47,5 +47,5 @@ public abstract class piece {
     }
 
 
-    public abstract boolean isValidMove(position newPosition, board chessboard);
+    public abstract boolean isValidMove(Position newPosition, Board chessboard);
 }
