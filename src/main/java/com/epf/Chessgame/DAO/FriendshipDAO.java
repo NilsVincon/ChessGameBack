@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,4 +19,9 @@ public interface FriendshipDAO extends CrudRepository<Friendship,Long> {
     boolean areFriends(@Param("user1") User user1, @Param("user2") User user2);
 
     Optional<Friendship> findByFriend1AndFriend2(User friend1, User friend2);
+
+    @Query("SELECT f.friend1 FROM Friendship f WHERE f.friend2 = :user " +
+            "UNION " +
+            "SELECT f.friend2 FROM Friendship f WHERE f.friend1 = :user")
+    List<User> findFriendsByUser(@Param("user") User user);
 }

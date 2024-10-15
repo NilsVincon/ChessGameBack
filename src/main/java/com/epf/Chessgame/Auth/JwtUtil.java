@@ -1,9 +1,8 @@
 package com.epf.Chessgame.Auth;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;
 
+import java.security.SignatureException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,9 +30,16 @@ public class JwtUtil {
     }
 
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        try {
+            return extractClaim(token, Claims::getSubject);
+        } catch (ExpiredJwtException e) {
+            throw new JwtException("JWT token is expired");
+        }  catch (JwtException e) {
+            throw new JwtException("Invalid JWT token");
+        } catch (Exception e) {
+            throw new JwtException("An error occurred while extracting username from JWT");
+        }
     }
-
     public Boolean validateToken(String token, String username) {
         final String extractedUsername = extractUsername(token);
         return (extractedUsername.equals(username) && !isTokenExpired(token));

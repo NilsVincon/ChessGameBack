@@ -8,6 +8,7 @@ import com.epf.Chessgame.Model.User;
 import com.epf.Chessgame.Service.FriendshipService;
 import com.epf.Chessgame.Service.PlayService;
 import com.epf.Chessgame.Service.UserService;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,9 +16,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @Slf4j
-@RequestMapping("/friendship")
+@CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api/friend")
 public class FriendshipController {
 
     @Autowired
@@ -29,10 +33,16 @@ public class FriendshipController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/getAll")
-    @ResponseBody
-    public Iterable<Friendship> index() {
-        return friendshipService.getFriendships();
+    @GetMapping("/getFriends")
+    public  ResponseEntity<?> getFriends(@RequestHeader("Authorization") String authorizationHeader) {
+        try {
+            User user_connected = jwtService.getUserfromJwt(authorizationHeader);
+            List<User> friends = friendshipService.getFriends(user_connected);
+            List<String> listfriendsUsername = friends.stream().map(User::getUsername).toList();
+            return ResponseEntity.ok(listfriendsUsername);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la récupération des amis" + e.getMessage());
+        }
     }
 
     @PostMapping("/add/{username_friend}")

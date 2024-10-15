@@ -5,6 +5,8 @@ import com.epf.Chessgame.Model.Friendship;
 import com.epf.Chessgame.Model.User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FriendshipService {
 
@@ -13,7 +15,6 @@ public class FriendshipService {
     public FriendshipService(FriendshipDAO friendshipDAO) {
         this.friendshipDAO = friendshipDAO;
     }
-
 
     public Iterable<Friendship> getFriendships() {
         return friendshipDAO.findAll();
@@ -35,6 +36,10 @@ public class FriendshipService {
 
     public boolean areFriends(User user1, User user2) {
         return friendshipDAO.areFriends(user1, user2);
+    }
+
+    public List<User> getFriends(User user) {
+        return friendshipDAO.findFriendsByUser(user);
     }
 
     public Friendship findFriendshipByUser(User friend1, User friend2) {
