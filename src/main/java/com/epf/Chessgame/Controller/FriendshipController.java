@@ -1,10 +1,13 @@
 package com.epf.Chessgame.Controller;
 
+import com.epf.Chessgame.Auth.JwtService;
 import com.epf.Chessgame.DTO.CheckFriendshipRequest;
 import com.epf.Chessgame.Model.Friendship;
 import com.epf.Chessgame.Model.Play;
+import com.epf.Chessgame.Model.User;
 import com.epf.Chessgame.Service.FriendshipService;
 import com.epf.Chessgame.Service.PlayService;
+import com.epf.Chessgame.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,15 +23,24 @@ public class FriendshipController {
     @Autowired
     private FriendshipService friendshipService;
 
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private UserService userService;
+
     @GetMapping("/getAll")
     @ResponseBody
     public Iterable<Friendship> index() {
         return friendshipService.getFriendships();
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<String> AddPlay(@RequestBody Friendship friendship) {
+    @PostMapping("/add/{username_friend}")
+    public ResponseEntity<String> AddPlay(@RequestHeader("Authorization") String authorizationHeader,@PathVariable String username_friend) {
         try {
+            User user_connected = jwtService.getUserfromJwt(authorizationHeader);
+            User user_friend = userService.findUserByUsername(username_friend);
+            Friendship friendship = new Friendship(user_connected, user_friend);
             friendshipService.createFriendship(friendship);
             return ResponseEntity.ok("Partie ajouté avec succès");
         } catch (Exception e) {

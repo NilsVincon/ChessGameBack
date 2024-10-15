@@ -11,7 +11,6 @@ import java.util.Date;
 
 @Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table
@@ -26,4 +25,8 @@ public class Friendship {
     @JoinColumn(name = "friend2")
     private User friend2;
 
+    public Friendship(User friend1, User friend2) {
+        this.friend1 = friend1;
+        this.friend2 = friend2;
+    }
 }
