@@ -41,6 +41,7 @@ public class FriendshipController {
             User user_connected = jwtService.getUserfromJwt(authorizationHeader);
             User user_friend = userService.findUserByUsername(username_friend);
             Friendship friendship = new Friendship(user_connected, user_friend);
+            log.info("Amitié créer " + friendship.getFriend1().getUsername() + " + " + friendship.getFriend2().getUsername());
             friendshipService.createFriendship(friendship);
             return ResponseEntity.ok("Partie ajouté avec succès");
         } catch (Exception e) {
