@@ -23,25 +23,4 @@ public class UserController {
         return userService.getUsers();
     }
 
-    @GetMapping("/signup")
-    public String signUpPage() {
-        return "signup";
-    }
-
-    @PostMapping("/signup")
-    public ResponseEntity<String> SignUp(@ModelAttribute User user) {
-        log.info("Username : "+user.getUsername()+" Password : "+user.getPassword());
-        try {
-            if (userService.existsByUsername(user.getUsername())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Ce nom d'utilisateur est déjà pris");
-            }
-            if (!userService.validPassword(user.getPassword())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Votre mot de passe doit contenir au moins 8 caractères");
-            }
-            userService.createUser(user);
-            return ResponseEntity.ok("Utilisateur ajouté avec succès");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'ajout de l'utilisateur" + e.getMessage());
-        }
-    }
 }

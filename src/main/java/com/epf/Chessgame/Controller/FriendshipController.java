@@ -21,7 +21,7 @@ import java.util.List;
 @Controller
 @Slf4j
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("/api/friend")
+    @RequestMapping("/api/friend")
 public class FriendshipController {
 
     @Autowired
