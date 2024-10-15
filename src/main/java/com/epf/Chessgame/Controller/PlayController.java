@@ -1,5 +1,6 @@
 package com.epf.Chessgame.Controller;
 
+import com.epf.Chessgame.Auth.JwtService;
 import com.epf.Chessgame.Enum.GameStatus;
 import com.epf.Chessgame.Enum.InvitationStatus;
 import com.epf.Chessgame.Model.Game;
@@ -8,6 +9,7 @@ import com.epf.Chessgame.Model.User;
 import com.epf.Chessgame.Service.GameService;
 import com.epf.Chessgame.Service.PlayService;
 import com.epf.Chessgame.Service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,16 +32,20 @@ public class PlayController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private JwtService jwtService;
+
+
     @GetMapping("/getAll")
     @ResponseBody
     public Iterable<Play> index() {
         return playService.getPlays();
     }
 
-    @PostMapping("/invite/{idUserConnected}")
-    public ResponseEntity<String> Invite(@RequestBody User user, @PathVariable Long idUserConnected) {
+    @PostMapping("/invite")
+    public ResponseEntity<String> Invite(@RequestHeader("Authorization") String authorizationHeader,@RequestBody User user) {
         try {
-            User userConnected = userService.getUser(idUserConnected);
+            User userConnected = jwtService.getUserfromJwt(authorizationHeader);
             Game game = new Game();
             gameService.createGame(game);
             Play play = new Play(game,userConnected,userService.getUser(user.getId()));
@@ -51,10 +57,11 @@ public class PlayController {
 
     }
 
-    @PostMapping("/accept/{idUserConnected}")
-    public ResponseEntity<String> Accept(@RequestBody Play play,@PathVariable Long idUserConnected) {
+    @PostMapping("/accept")
+    public ResponseEntity<String> Accept(@RequestHeader("Authorization") String authorizationHeader,@RequestBody Play play) {
         try {
-            if(userService.getUser(idUserConnected).equals(playService.getPlay(play.getId()).getReceiver())){
+            User userConnected = jwtService.getUserfromJwt(authorizationHeader);
+            if(userConnected.equals(playService.getPlay(play.getId()).getReceiver())){
                 Play currentPlay = playService.getPlay(play.getId());
                 currentPlay.setStatus(InvitationStatus.ACCEPTEE);
                 currentPlay.getGame().startGame();
@@ -69,10 +76,11 @@ public class PlayController {
         }
     }
 
-    @PostMapping("/refuse/{idUserConnected}")
-    public ResponseEntity<String> Refuse(@RequestBody Play play,@PathVariable Long idUserConnected) {
+    @PostMapping("/refuse")
+    public ResponseEntity<String> Refuse(@RequestHeader("Authorization") String authorizationHeader,@RequestBody Play play) {
         try {
-            if(userService.getUser(idUserConnected).equals(playService.getPlay(play.getId()).getReceiver())){
+            User userConnected = jwtService.getUserfromJwt(authorizationHeader);
+            if(userConnected.equals(playService.getPlay(play.getId()).getReceiver())){
                 Play currentPlay = playService.getPlay(play.getId());
                 currentPlay.setStatus(InvitationStatus.REFUSEE);
                 playService.updatePlay(currentPlay);
