@@ -78,15 +78,27 @@ public class Board {
 
     }
 
-    public void movePieces(Position start, Position end){
-        if (chessboard[start.getRow()][start.getColumn()] != null &&
-                chessboard[start.getRow()][start.getColumn()].isValidMove(end, this)) {
+    public void movePieces(Position start, Position end) {
+        Piece movingPiece = getPieceAt(start);
 
-            chessboard[end.getRow()][end.getColumn()] = chessboard[start.getRow()][start.getColumn()];
 
-            chessboard[end.getRow()][end.getColumn()].setPosition(end);
+        if (movingPiece != null) {
+            System.out.println(("1"));
+            if (movingPiece instanceof King && Math.abs(start.getColumn() - end.getColumn()) == 2) {
+                System.out.println(("2"));
+                Position rookStart = (end.getColumn() > start.getColumn()) ?
+                        new Position(start.getRow(), 7) :
+                        new Position(start.getRow(), 0);
+                castle(start, rookStart);
+            } else if (chessboard[start.getRow()][start.getColumn()] != null &&
+                    chessboard[start.getRow()][start.getColumn()].isValidMove(end, this)) {
 
-            chessboard[start.getRow()][start.getColumn()] = null;
+                chessboard[end.getRow()][end.getColumn()] = chessboard[start.getRow()][start.getColumn()];
+
+                chessboard[end.getRow()][end.getColumn()].setPosition(end);
+
+                chessboard[start.getRow()][start.getColumn()] = null;
+            }
         }
     }
    public Piece getPieceAt(Position pos){
@@ -161,5 +173,58 @@ public class Board {
         return true;
 
     }
+
+    public void castle(Position kingStart, Position rookStart ) {
+        Piece kingPiece = getPieceAt(kingStart);
+        Piece rookPiece = getPieceAt(rookStart);
+
+        if (kingPiece instanceof King && rookPiece instanceof Rook) {
+            King king = (King) kingPiece;
+            Rook rook = (Rook) rookPiece;
+
+
+            if (!king.hasMoved() && !rook.hasMoved() &&
+                    isPathClear(kingStart, rookStart, king.getColor()) && !isInCheck(king.getColor())) {
+
+
+                Position newKingPos = new Position(kingStart.getRow(), kingStart.getColumn() + (rookStart.getColumn() > kingStart.getColumn() ? 1 : -1));
+                movePieces(kingStart, newKingPos);
+                king.setHasMoved(true);
+
+
+                Position newRookPos = new Position(kingStart.getRow(), newKingPos.getColumn() - (rookStart.getColumn() > kingStart.getColumn() ? 1 : -1));
+                movePieces(rookStart, newRookPos);
+                rook.setHasMoved(true);
+            } else {
+                System.out.println("Conditions pour le roque non remplies.");
+            }
+        }
+    }
+
+
+    private boolean isPathClear(Position start, Position end, ColorPiece kingColor) {
+        int startCol = start.getColumn();
+        int endCol = end.getColumn();
+        int row = start.getRow();
+
+        if (startCol < endCol) {
+
+            for (int col = startCol + 1; col < endCol; col++) {
+                if (getPieceAt(row, col) != null && wouldBeInCheckAfterMove(kingColor, new Position(row,col-1), new Position(row,col-1))) {
+                    return false;
+                }
+            }
+        } else {
+
+            for (int col = endCol + 1; col < startCol; col++) {
+                if (getPieceAt(row, col) != null && wouldBeInCheckAfterMove(kingColor, new Position(row,col-1), new Position(row,col)))  {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
 
 }

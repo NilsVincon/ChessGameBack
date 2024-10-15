@@ -2,11 +2,20 @@ package com.epf.Chessgame.Model.pieces;
 
 
 import com.epf.Chessgame.Model.Board;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class Rook extends Piece {
+    private boolean hasMoved = false;
 
     public Rook(ColorPiece color, Position position) {
         super(color, position);
+    }
+
+    public boolean hasMoved() {
+        return hasMoved;
     }
 
 
@@ -39,8 +48,10 @@ public class Rook extends Piece {
 
         Piece destinationPiece = chessboard.getPieceAt(newPosition);
         if (destinationPiece == null) {
+            setHasMoved(true);
             return true;
         } else if (destinationPiece.getColor() != this.getColor()) {
+            setHasMoved(true);
             return true;
         }
 
