@@ -1,8 +1,9 @@
 package com.epf.Chessgame.Model;
 
 import com.epf.Chessgame.Model.pieces.*;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class Board {
     private Piece[][] chessboard;
 
@@ -140,7 +141,7 @@ public class Board {
 
     }
 
-    private boolean isPositionOnBoard(Position position) {
+    public boolean isPositionOnBoard(Position position) {
         return position.getRow() >= 0 && position.getRow() < chessboard.length &&
                 position.getColumn() >= 0 && position.getColumn() < chessboard[0].length;
 

@@ -28,4 +28,12 @@ public class Move {
             @AttributeOverride(name = "column", column = @Column(name = "final_column"))
     })
     private Position finalPosition;
+
+    @Override
+    public String toString() {
+        return "Move{" +
+                "initialPosition=" + initialPosition +
+                ", finalPosition=" + finalPosition +
+                '}';
+    }
 }
