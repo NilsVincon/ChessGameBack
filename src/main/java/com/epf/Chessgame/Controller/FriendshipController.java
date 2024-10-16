@@ -16,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -34,54 +36,71 @@ public class FriendshipController {
     private UserService userService;
 
     @GetMapping("/getFriends")
-    public  ResponseEntity<?> getFriends(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<Map<String, Object>> getFriends(@RequestHeader("Authorization") String authorizationHeader) {
+        Map<String, Object> response = new HashMap<>();
         try {
-            User user_connected = jwtService.getUserfromJwt(authorizationHeader);
-            List<User> friends = friendshipService.getFriends(user_connected);
-            List<String> listfriendsUsername = friends.stream().map(User::getUsername).toList();
-            return ResponseEntity.ok(listfriendsUsername);
+            User userConnected = jwtService.getUserfromJwt(authorizationHeader);
+            List<User> friends = friendshipService.getFriends(userConnected);
+            List<String> friendsUsernames = friends.stream().map(User::getUsername).toList();
+            response.put("friends", friendsUsernames);
+            response.put("message", "Amitiés récupérées avec succès.");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la récupération des amis" + e.getMessage());
+            response.put("error", "Erreur lors de la récupération des amis: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
+
     @PostMapping("/add/{username_friend}")
-    public ResponseEntity<String> AddPlay(@RequestHeader("Authorization") String authorizationHeader,@PathVariable String username_friend) {
+    public ResponseEntity<Map<String, String>> AddPlay(@RequestHeader("Authorization") String authorizationHeader, @PathVariable String username_friend) {
         try {
             User user_connected = jwtService.getUserfromJwt(authorizationHeader);
             User user_friend = userService.findUserByUsername(username_friend);
             Friendship friendship = new Friendship(user_connected, user_friend);
             log.info("Amitié créer " + friendship.getFriend1().getUsername() + " + " + friendship.getFriend2().getUsername());
             friendshipService.createFriendship(friendship);
-            return ResponseEntity.ok("Partie ajouté avec succès");
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Amitié ajoutée avec succès");
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'ajout de la partie" + e.getMessage());
-        }
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Erreur lors de l'ajout de l'amitié: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);        }
     }
 
     @PostMapping("/checkFriendship")
-    public ResponseEntity<String> AreFriend(@RequestBody Friendship friendship) {
+    public ResponseEntity<Map<String, Object>> AreFriend(@RequestBody Friendship friendship) {
+        Map<String, Object> response = new HashMap<>();
         try {
             boolean areTheyFriend = friendshipService.areFriends(friendship.getFriend1(), friendship.getFriend2());
-            return ResponseEntity.ok("L'amitié est : " + areTheyFriend);
+            response.put("areFriends", areTheyFriend);
+            response.put("message", "L'amitié a été vérifiée avec succès.");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'ajout de la partie" + e.getMessage());
+            response.put("error", "Erreur lors de la vérification de l'amitié: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<String> DeleteFriendship(@RequestBody Friendship friendship) {
+    public ResponseEntity<Map<String, Object>> DeleteFriendship(@RequestBody Friendship friendship) {
+        Map<String, Object> response = new HashMap<>();
         try {
             if (friendshipService.areFriends(friendship.getFriend1(), friendship.getFriend2())) {
-                log.info("Id amitié" + friendshipService.findFriendshipByUser(friendship.getFriend1(), friendship.getFriend2()));
-                friendshipService.deleteFriendship(friendshipService.findFriendshipByUser(friendship.getFriend1(), friendship.getFriend2()).getId());
-                return ResponseEntity.ok("Amitié supprimée avec succès");
-            }
-            else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Vous n'êtes pas amis");
+                Long friendshipId = friendshipService.findFriendshipByUser(friendship.getFriend1(), friendship.getFriend2()).getId();
+                log.info("Id amitié: " + friendshipId);
+                friendshipService.deleteFriendship(friendshipId);
+                response.put("message", "Amitié supprimée avec succès");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("error", "Vous n'êtes pas amis");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); // Utilisation de BAD_REQUEST ici
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la suppression de l'amitié " + e.getMessage());
+            response.put("error", "Erreur lors de la suppression de l'amitié: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
