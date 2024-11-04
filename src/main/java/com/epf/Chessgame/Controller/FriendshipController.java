@@ -36,18 +36,14 @@ public class FriendshipController {
     private UserService userService;
 
     @GetMapping("/getFriends")
-    public ResponseEntity<Map<String, Object>> getFriends(@RequestHeader("Authorization") String authorizationHeader) {
-        Map<String, Object> response = new HashMap<>();
+    public  ResponseEntity<?> getFriends(@RequestHeader("Authorization") String authorizationHeader) {
         try {
-            User userConnected = jwtService.getUserfromJwt(authorizationHeader);
-            List<User> friends = friendshipService.getFriends(userConnected);
-            List<String> friendsUsernames = friends.stream().map(User::getUsername).toList();
-            response.put("friends", friendsUsernames);
-            response.put("message", "Amitiés récupérées avec succès.");
-            return ResponseEntity.ok(response);
+            User user_connected = jwtService.getUserfromJwt(authorizationHeader);
+            List<User> friends = friendshipService.getFriends(user_connected);
+            List<String> listfriendsUsername = friends.stream().map(User::getUsername).toList();
+            return ResponseEntity.ok(listfriendsUsername);
         } catch (Exception e) {
-            response.put("error", "Erreur lors de la récupération des amis: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la récupération des amis" + e.getMessage());
         }
     }
 
