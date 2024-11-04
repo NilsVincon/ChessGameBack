@@ -40,7 +40,6 @@ public class MoveService {
             board.movePieces(start, end); // Déplace la pièce avant de sauvegarder le mouvement
             Move savedMove = moveDAO.save(move); // Sauvegarde le mouvement
 
-            // Alterner le joueur actuel
             currentPlayer = (currentPlayer == ColorPiece.WHITE) ? ColorPiece.BLACK : ColorPiece.WHITE;
 
             return savedMove;
