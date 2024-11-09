@@ -70,40 +70,49 @@ public class PlayController {
     }
 
     @PostMapping("/accept")
-    public ResponseEntity<String> Accept(@RequestHeader("Authorization") String authorizationHeader,@RequestBody Play play) {
+    public ResponseEntity<Map<String,String>> Accept(@RequestHeader("Authorization") String authorizationHeader,@RequestBody Long playId) {
         try {
             User userConnected = jwtService.getUserfromJwt(authorizationHeader);
-            if(userConnected.equals(playService.getPlay(play.getId()).getReceiver())){
-                Play currentPlay = playService.getPlay(play.getId());
+            if(userConnected.equals(playService.getPlay(playId).getReceiver())){
+                Play currentPlay = playService.getPlay(playId);
                 currentPlay.setStatus(InvitationStatus.ACCEPTEE);
                 currentPlay.getGame().startGame();
                 playService.updatePlay(currentPlay);
-                return ResponseEntity.ok("Invitation accepté avec succès");
+                Map<String,String> response = Map.of("message","Invitation accepté avec succès");
+                return ResponseEntity.ok(response);
             }
             else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Vous n'êtes pas le destinataire de cette invitation");
+                Map<String,String> response = Map.of("message","Vous n'êtes pas le destinataire de cette invitation");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'envoi de l'invitation" + e.getMessage());
+            Map<String,String> response = Map.of("message","Erreur lors de l'acceptation de l'invitation"+e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
     @PostMapping("/refuse")
-    public ResponseEntity<String> Refuse(@RequestHeader("Authorization") String authorizationHeader,@RequestBody Play play) {
+    public ResponseEntity<Map<String,String>> Refuse(@RequestHeader("Authorization") String authorizationHeader,@RequestBody Long playId) {
         try {
             User userConnected = jwtService.getUserfromJwt(authorizationHeader);
-            if(userConnected.equals(playService.getPlay(play.getId()).getReceiver())){
-                Play currentPlay = playService.getPlay(play.getId());
+            if(userConnected.equals(playService.getPlay(playId).getReceiver())){
+                Play currentPlay = playService.getPlay(playId);
                 currentPlay.setStatus(InvitationStatus.REFUSEE);
                 playService.updatePlay(currentPlay);
-                gameService.deleteGame(currentPlay.getGame().getId());
-                return ResponseEntity.ok("Invitation refusé avec succès");
+                Game game = currentPlay.getGame();
+                game.setStatus(GameStatus.ANNULEE);
+                gameService.updateGame(game);
+                Map<String,String> response = Map.of("message","Invitation refusé avec succès");
+                return ResponseEntity.ok(response);
             }
             else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Vous n'êtes pas le destinataire de cette invitation");
+                Map<String,String> response = Map.of("message","Vous n'êtes pas le destinataire de cette invitation");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'envoi de l'invitation" + e.getMessage());
+            Map<String,String> response = Map.of("message","Erreur lors du refus de l'invitation"+e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
