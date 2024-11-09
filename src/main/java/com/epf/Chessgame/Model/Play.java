@@ -37,4 +37,15 @@ public class Play {
         this.receiver = receiver;
         this.status = InvitationStatus.EN_ATTENTE;
     }
+
+    @Override
+    public String toString() {
+        return "Play" +
+                "id=" + id +
+                ", game=" + game +
+                ", sender=" + sender +
+                ", receiver=" + receiver +
+                ", status=" + status +
+                '}';
+    }
 }

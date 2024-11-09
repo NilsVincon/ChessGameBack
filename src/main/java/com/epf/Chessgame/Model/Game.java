@@ -43,4 +43,11 @@ public class Game {
         this.winner = winner;
     }
 
+    @Override
+    public String toString() {
+        return "Game{" +
+                "id=" + id +
+                ", status=" + status +
+                '}';
+    }
 }

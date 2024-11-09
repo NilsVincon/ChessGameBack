@@ -4,6 +4,8 @@ import com.epf.Chessgame.DAO.PlayDAO;
 import com.epf.Chessgame.Model.Play;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PlayService {
     private final PlayDAO playDAO;
@@ -14,6 +16,13 @@ public class PlayService {
 
     public Iterable<Play> getPlays() {
         return playDAO.findAll();
+    }
+    public List<Play> getPlaysBySender(Long senderId) {
+        return playDAO.findBySenderId(senderId);
+    }
+
+    public List<Play> getPlaysByReceiver(Long receiverId) {
+        return playDAO.findByReceiverId(receiverId);
     }
 
     public Play getPlay(Long id) {

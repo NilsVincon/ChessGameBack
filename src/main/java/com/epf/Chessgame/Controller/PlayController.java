@@ -45,6 +45,14 @@ public class PlayController {
         return playService.getPlays();
     }
 
+    @GetMapping("/getMyInvitations")
+    @ResponseBody
+    public Iterable<Play> getPlays(@RequestHeader("Authorization") String authorizationHeader) {
+        User userConnected = jwtService.getUserfromJwt(authorizationHeader);
+        log.info("Liste des invitations de :"+userConnected.getUsername()+" : "+ playService.getPlaysByReceiver(userConnected.getId()));
+        return playService.getPlaysByReceiver(userConnected.getId());
+    }
+
     @PostMapping("/invite")
     public ResponseEntity<Map<String,String>> Invite(@RequestHeader("Authorization") String authorizationHeader, @RequestBody String username) {
         try {
@@ -59,7 +67,6 @@ public class PlayController {
             Map<String,String> response = Map.of("message","Erreur lors de l'envoi de l'invitation" + e.getMessage());
             return ResponseEntity.ok(response);
         }
-
     }
 
     @PostMapping("/accept")
