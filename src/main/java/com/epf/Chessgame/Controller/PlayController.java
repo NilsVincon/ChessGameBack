@@ -17,7 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Controller
+@CrossOrigin(origins = "http://localhost:4200")
 @Slf4j
 @RequestMapping("/play")
 public class PlayController {
@@ -43,16 +46,18 @@ public class PlayController {
     }
 
     @PostMapping("/invite")
-    public ResponseEntity<String> Invite(@RequestHeader("Authorization") String authorizationHeader,@RequestBody User user) {
+    public ResponseEntity<Map<String,String>> Invite(@RequestHeader("Authorization") String authorizationHeader, @RequestBody String username) {
         try {
             User userConnected = jwtService.getUserfromJwt(authorizationHeader);
             Game game = new Game();
             gameService.createGame(game);
-            Play play = new Play(game,userConnected,userService.getUser(user.getId()));
+            Play play = new Play(game,userConnected,userService.findUserByUsername(username));
             playService.createPlay(play);
-            return ResponseEntity.ok("Invitation envoyée avec succès");
+            Map<String,String> response = Map.of("message","Invitation envoyée avec succès");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'envoi de l'invitation" + e.getMessage());
+            Map<String,String> response = Map.of("message","Erreur lors de l'envoi de l'invitation" + e.getMessage());
+            return ResponseEntity.ok(response);
         }
 
     }

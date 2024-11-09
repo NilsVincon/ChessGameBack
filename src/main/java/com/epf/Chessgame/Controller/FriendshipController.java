@@ -23,7 +23,7 @@ import java.util.Map;
 @Controller
 @Slf4j
 @CrossOrigin(origins = "http://localhost:4200")
-    @RequestMapping("/api/friend")
+@RequestMapping("/api/friend")
 public class FriendshipController {
 
     @Autowired
@@ -41,6 +41,7 @@ public class FriendshipController {
             User user_connected = jwtService.getUserfromJwt(authorizationHeader);
             List<User> friends = friendshipService.getFriends(user_connected);
             List<String> listfriendsUsername = friends.stream().map(User::getUsername).toList();
+                log.info("Liste d'amis de "+user_connected.getUsername()+" : "+listfriendsUsername);
             return ResponseEntity.ok(listfriendsUsername);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la récupération des amis" + e.getMessage());
