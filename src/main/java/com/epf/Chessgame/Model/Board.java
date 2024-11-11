@@ -84,9 +84,7 @@ public class Board {
 
 
         if (movingPiece != null) {
-            System.out.println(("1"));
             if (movingPiece instanceof King && Math.abs(start.getColumn() - end.getColumn()) == 2) {
-                System.out.println(("2"));
                 Position rookStart = (end.getColumn() > start.getColumn()) ?
                         new Position(start.getRow(), 7) :
                         new Position(start.getRow(), 0);

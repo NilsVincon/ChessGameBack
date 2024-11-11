@@ -31,10 +31,12 @@ CREATE TABLE Play
 
 CREATE TABLE Move (
                       id SERIAL PRIMARY KEY,
-                      initial_row INT NOT NULL,  -- Coordonnée X de la position initiale
-                      initial_column INT NOT NULL,  -- Coordonnée Y de la position initiale
-                      final_row INT NOT NULL,    -- Coordonnée X de la position finale
-                      final_column INT NOT NULL      -- Coordonnée Y de la position finale
+                      initial_row INT NOT NULL,
+                      initial_column INT NOT NULL,
+                      final_row INT NOT NULL,
+                      final_column INT NOT NULL,
+                      id_game BIGINT,  -- Renommer la colonne en 'id_game' pour correspondre à votre code
+                      FOREIGN KEY (id_game) REFERENCES Game(id)  -- Référence correcte vers la table 'Game'
 );
 
 CREATE TABLE Friendship (

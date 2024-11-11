@@ -29,6 +29,21 @@ public class Move {
     })
     private Position finalPosition;
 
+    @ManyToOne
+    @JoinColumn(name = "id_game", nullable = true)  // Permet que 'game' soit null
+    private Game game;
+
+    public Move(Position initialPosition, Position finalPosition) {
+        this.initialPosition = initialPosition;
+        this.finalPosition = finalPosition;
+    }
+
+    public Move(Position initialPosition, Position finalPosition, Game game) {
+        this.initialPosition = initialPosition;
+        this.finalPosition = finalPosition;
+        this.game = game;
+    }
+
     @Override
     public String toString() {
         return "Move{" +

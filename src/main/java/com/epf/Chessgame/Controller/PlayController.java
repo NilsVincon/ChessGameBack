@@ -58,10 +58,11 @@ public class PlayController {
         try {
             User userConnected = jwtService.getUserfromJwt(authorizationHeader);
             Game game = new Game();
-            gameService.createGame(game);
+            Game gameBack = gameService.createGame(game);
             Play play = new Play(game,userConnected,userService.findUserByUsername(username));
-            playService.createPlay(play);
-            Map<String,String> response = Map.of("message","Invitation envoyée avec succès");
+           playService.createPlay(play);
+            Map<String,String> response = Map.of("message","Invitation envoyée avec succès",
+                    "gameId",gameBack.getId().toString());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String,String> response = Map.of("message","Erreur lors de l'envoi de l'invitation" + e.getMessage());
@@ -77,8 +78,12 @@ public class PlayController {
                 Play currentPlay = playService.getPlay(playId);
                 currentPlay.setStatus(InvitationStatus.ACCEPTEE);
                 currentPlay.getGame().startGame();
+                String gameId= currentPlay.getGame().getId().toString();
                 playService.updatePlay(currentPlay);
-                Map<String,String> response = Map.of("message","Invitation accepté avec succès");
+                Map<String, String> response = Map.of(
+                        "message", "Invitation acceptée avec succès",
+                        "gameId", gameId
+                );
                 return ResponseEntity.ok(response);
             }
             else {
@@ -115,6 +120,4 @@ public class PlayController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
-
 }

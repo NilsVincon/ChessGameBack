@@ -2,12 +2,15 @@ package com.epf.Chessgame.Service;
 
 import com.epf.Chessgame.DAO.MoveDAO;
 import com.epf.Chessgame.Model.Board;
+import com.epf.Chessgame.Model.Game;
 import com.epf.Chessgame.Model.Move;
 import com.epf.Chessgame.Model.pieces.Position;
 import com.epf.Chessgame.Model.pieces.ColorPiece;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class MoveService {
 
@@ -34,15 +37,19 @@ public class MoveService {
         Position start = move.getInitialPosition();
         Position end = move.getFinalPosition();
         ColorPiece pieceColor = board.getPieceAt(start).getColor();
-        System.out.println("couleur" + pieceColor);
-
+        log.info("Piece color: {}", pieceColor);
         if (isMoveValid(start, end, pieceColor)) {
-            board.movePieces(start, end); // Déplace la pièce avant de sauvegarder le mouvement
-            Move savedMove = moveDAO.save(move); // Sauvegarde le mouvement
-
+            log.info("Mouvement valide: {}", move);
+            board.movePieces(start, end);
+            try {
+                moveDAO.save(move);
+                log.info("Mouvement sauvegardé : " + move);
+            } catch (Exception e) {
+                log.error("Erreur lors de la sauvegarde du mouvement: {}", e.getMessage());
+                throw new RuntimeException("Erreur lors de la sauvegarde du mouvement dans la base de données.", e);
+            }
             currentPlayer = (currentPlayer == ColorPiece.WHITE) ? ColorPiece.BLACK : ColorPiece.WHITE;
-
-            return savedMove;
+            return move;
         } else {
             throw new IllegalArgumentException("Mouvement invalide.");
         }
@@ -54,7 +61,7 @@ public class MoveService {
         ColorPiece pieceColor = board.getPieceAt(start).getColor();
 
         // Validation du mouvement avant mise à jour
-        if (isMoveValid(start, end, pieceColor)) {
+        if (this.isMoveValid(start, end, pieceColor)) {
             return moveDAO.save(move);
         } else {
             throw new IllegalArgumentException("Mouvement invalide.");
@@ -68,16 +75,19 @@ public class MoveService {
     private boolean isMoveValid(Position start, Position end, ColorPiece pieceColor) {
         // Vérifie si c'est le tour du joueur
         if (pieceColor != currentPlayer) {
+            log.warn("It is not the player's turn: expected {}, found {}", currentPlayer, pieceColor);
             return false;
         }
 
         // Vérifie si la position de départ et d'arrivée sont valides
         if (!board.isPositionOnBoard(start) || !board.isPositionOnBoard(end)) {
+            log.warn("Invalid move positions: start={} end={}", start, end);
             return false;
         }
 
         // Vérifie si la pièce peut se déplacer
         if (board.getPieceAt(start) == null || board.getPieceAt(start).getColor() != pieceColor) {
+            log.warn("No piece at start position or color mismatch: {}", start);
             return false;
         }
 
@@ -88,4 +98,5 @@ public class MoveService {
 
         return false;
     }
+
 }
