@@ -80,16 +80,17 @@ public class MoveController {
             Move savedMove = new Move(move.getInitialPosition(), move.getFinalPosition(), game);  // Associer le jeu à ce mouvement
             MoveResponse moveResponse = moveService.createMove(savedMove);  // Sauvegarder le mouvement
             movetoFront = moveResponse.getMove();
+
         } catch (Exception e) {
             log.error("Error while creating the move: {}", e.getMessage());
-            throw new RuntimeException("Error while creating the move", e);  // Gérer l'exception correctement
+            throw new RuntimeException("Error while creating the move", e);
         }
         if (movetoFront == null) {
             log.error("Error while creating the move: movetoFront is null");
             throw new RuntimeException("Error while creating the move: movetoFront is null");  // Gérer l'exception correctement
         }
         log.info("Move created: {}", movetoFront);
-        return movetoFront;  // Renvoie le mouvement aux abonnés
+        return movetoFront;
     }
 
 }
