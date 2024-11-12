@@ -2,6 +2,7 @@ package com.epf.Chessgame.Controller;
 
 import com.epf.Chessgame.Model.Game;
 import com.epf.Chessgame.Model.Move;
+import com.epf.Chessgame.Model.MoveResponse;
 import com.epf.Chessgame.Service.GameService;
 import com.epf.Chessgame.Service.MoveService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,12 @@ public class MoveController {
         Map<String, String> response = new HashMap<>();
         log.info("Move received: {}", move);
         try {
-            moveService.createMove(move);
+            MoveResponse moveResponse=moveService.createMove(move);
+            if (moveResponse.isCheckmate()){
+                response.put("checkmate", "true");
+            }else{
+                response.put("checkmate", "false");
+            }
             log.info("Move created: {}", move);
             response.put("message", "Movement joué avec succès");
         } catch (Exception e) {
@@ -72,7 +78,8 @@ public class MoveController {
             }
             log.info("Game found: {}", game);
             Move savedMove = new Move(move.getInitialPosition(), move.getFinalPosition(), game);  // Associer le jeu à ce mouvement
-            movetoFront = moveService.createMove(savedMove);  // Sauvegarder le mouvement
+            MoveResponse moveResponse = moveService.createMove(savedMove);  // Sauvegarder le mouvement
+            movetoFront = moveResponse.getMove();
         } catch (Exception e) {
             log.error("Error while creating the move: {}", e.getMessage());
             throw new RuntimeException("Error while creating the move", e);  // Gérer l'exception correctement

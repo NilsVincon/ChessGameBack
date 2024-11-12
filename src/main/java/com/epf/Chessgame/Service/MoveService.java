@@ -4,6 +4,7 @@ import com.epf.Chessgame.DAO.MoveDAO;
 import com.epf.Chessgame.Model.Board;
 import com.epf.Chessgame.Model.Game;
 import com.epf.Chessgame.Model.Move;
+import com.epf.Chessgame.Model.MoveResponse;
 import com.epf.Chessgame.Model.pieces.Position;
 import com.epf.Chessgame.Model.pieces.ColorPiece;
 import lombok.extern.slf4j.Slf4j;
@@ -33,23 +34,31 @@ public class MoveService {
         return moveDAO.findById(id).orElse(null);
     }
 
-    public Move createMove(Move move) {
+    public MoveResponse createMove(Move move) {
         Position start = move.getInitialPosition();
         Position end = move.getFinalPosition();
         ColorPiece pieceColor = board.getPieceAt(start).getColor();
+        ColorPiece otherColor = (pieceColor == ColorPiece.WHITE) ? ColorPiece.BLACK : ColorPiece.WHITE;
         log.info("Piece color: {}", pieceColor);
         if (isMoveValid(start, end, pieceColor)) {
             log.info("Mouvement valide: {}", move);
             board.movePieces(start, end);
             try {
-                moveDAO.save(move);
+                Move savedMove = moveDAO.save(move);
                 log.info("Mouvement sauvegardé : " + move);
+                currentPlayer = (currentPlayer == ColorPiece.WHITE) ? ColorPiece.BLACK : ColorPiece.WHITE;
+
+                boolean checkmate = board.isCheckmate(otherColor);
+                if (checkmate) {
+                    System.out.println("Echec et mat !");
+                }
+
+                return new MoveResponse(savedMove, checkmate);
             } catch (Exception e) {
                 log.error("Erreur lors de la sauvegarde du mouvement: {}", e.getMessage());
                 throw new RuntimeException("Erreur lors de la sauvegarde du mouvement dans la base de données.", e);
             }
-            currentPlayer = (currentPlayer == ColorPiece.WHITE) ? ColorPiece.BLACK : ColorPiece.WHITE;
-            return move;
+
 
         } else {
             throw new IllegalArgumentException("Mouvement invalide.");
