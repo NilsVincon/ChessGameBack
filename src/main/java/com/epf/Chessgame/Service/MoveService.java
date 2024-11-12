@@ -50,6 +50,7 @@ public class MoveService {
             }
             currentPlayer = (currentPlayer == ColorPiece.WHITE) ? ColorPiece.BLACK : ColorPiece.WHITE;
             return move;
+
         } else {
             throw new IllegalArgumentException("Mouvement invalide.");
         }
@@ -83,6 +84,10 @@ public class MoveService {
         if (!board.isPositionOnBoard(start) || !board.isPositionOnBoard(end)) {
             log.warn("Invalid move positions: start={} end={}", start, end);
             return false;
+        }
+
+        if (board.castle(start,end)){
+            return true;
         }
 
         // Vérifie si la pièce peut se déplacer

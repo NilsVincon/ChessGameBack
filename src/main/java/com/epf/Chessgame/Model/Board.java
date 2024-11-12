@@ -173,7 +173,7 @@ public class Board {
 
     }
 
-    public void castle(Position kingStart, Position rookStart ) {
+    public boolean castle(Position kingStart, Position rookStart ) {
         Piece kingPiece = getPieceAt(kingStart);
         Piece rookPiece = getPieceAt(rookStart);
 
@@ -194,10 +194,12 @@ public class Board {
                 Position newRookPos = new Position(kingStart.getRow(), newKingPos.getColumn() - (rookStart.getColumn() > kingStart.getColumn() ? 1 : -1));
                 movePieces(rookStart, newRookPos);
                 rook.setHasMoved(true);
+                return true;
             } else {
                 System.out.println("Conditions pour le roque non remplies.");
             }
         }
+        return false;
     }
 
 
