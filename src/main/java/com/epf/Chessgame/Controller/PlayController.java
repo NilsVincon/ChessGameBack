@@ -59,10 +59,12 @@ public class PlayController {
             User userConnected = jwtService.getUserfromJwt(authorizationHeader);
             Game game = new Game();
             Game gameBack = gameService.createGame(game);
-            Play play = new Play(game,userConnected,userService.findUserByUsername(username));
-           playService.createPlay(play);
+            String colorSender = Math.random() < 0.5 ? "white" : "black";
+            String colorReceiver = colorSender.equals("white") ? "black" : "white";
+            Play play = new Play(game,userConnected,userService.findUserByUsername(username),colorSender,colorReceiver);
+            playService.createPlay(play);
             Map<String,String> response = Map.of("message","Invitation envoyée avec succès",
-                    "gameId",gameBack.getId().toString());
+                    "gameId",gameBack.getId().toString(),"colorSender",colorSender,"colorReceiver",colorReceiver,"senderUsername",userConnected.getUsername(),"receiverUsername",username);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String,String> response = Map.of("message","Erreur lors de l'envoi de l'invitation" + e.getMessage());
@@ -82,7 +84,7 @@ public class PlayController {
                 playService.updatePlay(currentPlay);
                 Map<String, String> response = Map.of(
                         "message", "Invitation acceptée avec succès",
-                        "gameId", gameId
+                        "gameId", gameId,"colorSender",currentPlay.getSendercolor(),"colorReceiver",currentPlay.getReceivercolor(),"senderUsername",currentPlay.getSender().getUsername(),"receiverUsername",currentPlay.getReceiver().getUsername()
                 );
                 return ResponseEntity.ok(response);
             }

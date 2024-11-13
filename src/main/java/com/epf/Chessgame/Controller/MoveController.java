@@ -1,5 +1,6 @@
 package com.epf.Chessgame.Controller;
 
+import com.epf.Chessgame.DTO.MoveDTO;
 import com.epf.Chessgame.Model.Game;
 import com.epf.Chessgame.Model.Move;
 import com.epf.Chessgame.Model.MoveResponse;
@@ -59,9 +60,11 @@ public class MoveController {
 
     @MessageMapping("/move/{gameId}")
     @SendTo("/topic/game-progress/{gameId}")
-    public Move moveOnline(@DestinationVariable String gameId, @RequestBody Move move) {
+    public MoveResponse moveOnline(@DestinationVariable String gameId, @RequestBody MoveDTO moveDTO) {
+        Move move = moveDTO.getMove();
+        log.info("J'ai reçu : "+moveDTO);
         log.info("Move received for game {}: {}", gameId, move);
-        Move movetoFront = null;
+        MoveResponse moveResponse = null;
         try {
             Long gameLongId;
             try {
@@ -78,19 +81,22 @@ public class MoveController {
             }
             log.info("Game found: {}", game);
             Move savedMove = new Move(move.getInitialPosition(), move.getFinalPosition(), game);  // Associer le jeu à ce mouvement
-            MoveResponse moveResponse = moveService.createMove(savedMove);  // Sauvegarder le mouvement
-            movetoFront = moveResponse.getMove();
+            moveResponse = moveService.createMove(savedMove);
+            log.info("activePlayer reçu par le front"+moveDTO.getActivePlayer());
+            String newactivePlayer = moveDTO.getActivePlayer().equals("white") ? "black" : "white";
+            log.info("activePlayer envoyé au front"+newactivePlayer);
+            moveResponse.setActivePlayer(newactivePlayer);
 
         } catch (Exception e) {
             log.error("Error while creating the move: {}", e.getMessage());
             throw new RuntimeException("Error while creating the move", e);
         }
-        if (movetoFront == null) {
+        if (moveResponse.getMove() == null) {
             log.error("Error while creating the move: movetoFront is null");
             throw new RuntimeException("Error while creating the move: movetoFront is null");  // Gérer l'exception correctement
         }
-        log.info("Move created: {}", movetoFront);
-        return movetoFront;
+        log.info("Move created: {}", moveResponse);
+        return moveResponse;
     }
 
 }

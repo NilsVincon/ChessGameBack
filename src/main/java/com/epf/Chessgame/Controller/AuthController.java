@@ -28,7 +28,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequest authRequest) {
-        String storedPassword = userService.findUserByUsername(authRequest.getUsername()).getPassword();
+        String storedPassword = userService.findUserByUsername  (authRequest.getUsername()).getPassword();
         if (storedPassword != null && storedPassword.equals(authRequest.getPassword())) {
             String token = jwtUtil.generateToken(authRequest.getUsername());
             log.info("Utilisateur connecté : " + authRequest.getUsername());

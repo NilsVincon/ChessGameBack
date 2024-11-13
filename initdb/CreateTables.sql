@@ -22,6 +22,8 @@ CREATE TABLE Play
     sender BIGINT,
     receiver BIGINT,
     status VARCHAR(20),
+    sendercolor VARCHAR(20),
+    receivercolor VARCHAR(20),
 
     CONSTRAINT fk_game FOREIGN KEY (id_game) REFERENCES Game(id),
     CONSTRAINT fk_sender FOREIGN KEY (sender) REFERENCES ChessUser(id) ON DELETE CASCADE,

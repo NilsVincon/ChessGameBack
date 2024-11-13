@@ -31,6 +31,21 @@ public class Play {
     @Enumerated(EnumType.STRING)
     private InvitationStatus status;
 
+    @Column(name = "sendercolor")
+    private String sendercolor;
+
+    @Column(name = "receivercolor")
+    private String receivercolor;
+
+    public Play(Game game, User sender, User receiver, String senderColor, String receiverColor) {
+        this.game = game;
+        this.sender = sender;
+        this.receiver = receiver;
+        this.status = InvitationStatus.EN_ATTENTE;
+        this.sendercolor = senderColor;
+        this.receivercolor = receiverColor;
+    }
+
     public Play(Game game, User sender, User receiver) {
         this.game = game;
         this.sender = sender;
