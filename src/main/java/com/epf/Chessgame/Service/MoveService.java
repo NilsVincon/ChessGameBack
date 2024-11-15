@@ -51,6 +51,8 @@ public class MoveService {
                 boolean checkmate = board.isCheckmate(otherColor);
                 if (checkmate) {
                     System.out.println("Echec et mat !");
+                    board.initBoard();
+                    this.currentPlayer = ColorPiece.WHITE;
                 }
 
                 return new MoveResponse(savedMove, checkmate);
@@ -64,6 +66,13 @@ public class MoveService {
             throw new IllegalArgumentException("Mouvement invalide.");
         }
     }
+
+    public void CreateSurrender(){
+        board.initBoard();
+        this.currentPlayer = ColorPiece.WHITE;
+    }
+
+
 
     public Move updateMove(Move move) {
         Position start = move.getInitialPosition();

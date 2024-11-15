@@ -49,7 +49,13 @@ public class Board {
         chessboard[row][column] = p;
     }
 
-    private void initBoard() {
+    public void initBoard() {
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                chessboard[i][j] = null;
+            }
+        }
 
         chessboard[0][0] = new Rook(ColorPiece.BLACK, new Position(0,0));
         chessboard[0][7] = new Rook(ColorPiece.BLACK, new Position(0, 7));

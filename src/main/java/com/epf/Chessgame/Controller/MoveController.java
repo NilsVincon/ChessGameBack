@@ -4,6 +4,7 @@ import com.epf.Chessgame.DTO.MoveDTO;
 import com.epf.Chessgame.Model.Game;
 import com.epf.Chessgame.Model.Move;
 import com.epf.Chessgame.Model.MoveResponse;
+import com.epf.Chessgame.Model.pieces.ColorPiece;
 import com.epf.Chessgame.Service.GameService;
 import com.epf.Chessgame.Service.MoveService;
 import lombok.extern.slf4j.Slf4j;
@@ -45,11 +46,13 @@ public class MoveController {
             MoveResponse moveResponse=moveService.createMove(move);
             if (moveResponse.isCheckmate()){
                 response.put("checkmate", "true");
+
+
             }else{
                 response.put("checkmate", "false");
             }
             log.info("Move created: {}", move);
-            response.put("message", "Movement joué avec succès");
+            response.put("message", "Mouvement joué avec succès");
         } catch (Exception e) {
             response.put("error", "Error while creating the move: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
@@ -57,6 +60,17 @@ public class MoveController {
         log.info("Réponse envoyée");
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/surrender")
+    public Map<String, String> surrender(@RequestBody Map<String, String> request) {
+        String player = request.get("player");
+        moveService.CreateSurrender(    );
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Abandon réussi");
+        return response;
+    }
+
+
 
     @MessageMapping("/move/{gameId}")
     @SendTo("/topic/game-progress/{gameId}")
