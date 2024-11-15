@@ -13,7 +13,6 @@ public class JwtUtil {
 
     private String SECRET_KEY = "0c1c60114dff4f44345a17c01023a1397e431e52995272c8cf3cea07c6c6c466";
 
-    // Générer un token
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, username);

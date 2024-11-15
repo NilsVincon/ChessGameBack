@@ -30,7 +30,7 @@ public class Move {
     private Position finalPosition;
 
     @ManyToOne
-    @JoinColumn(name = "id_game", nullable = true)  // Permet que 'game' soit null
+    @JoinColumn(name = "id_game", nullable = true)
     private Game game;
 
     public Move(Position initialPosition, Position finalPosition) {

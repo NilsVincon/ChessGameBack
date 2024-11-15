@@ -15,7 +15,7 @@ public class mainTest {
 
     public static void startGame(Board chessBoard) {
         Scanner scanner = new Scanner(System.in);
-        boolean isWhiteTurn = true; // Commence par le joueur blanc
+        boolean isWhiteTurn = true;
 
         while (true) {
             System.out.println(isWhiteTurn ? "C'est le tour des Blancs" : "C'est le tour des Noirs");
@@ -53,9 +53,9 @@ public class mainTest {
     }
 
     private static Position convertInputToPosition(String input) {
-        // Ex : e2 -> Position(6, 4) pour un échiquier de 0 à 7
-        int row = 8 - Character.getNumericValue(input.charAt(1)); // Conversion de 1-8 à 0-7
-        int column = input.charAt(0) - 'a'; // Conversion de 'a'-'h' à 0-7
+
+        int row = 8 - Character.getNumericValue(input.charAt(1));
+        int column = input.charAt(0) - 'a';
         return new Position(row, column);
     }
 }
