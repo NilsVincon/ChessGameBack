@@ -70,6 +70,19 @@ public class MoveController {
         return response;
     }
 
+    @PostMapping("/draw")
+    public Map<String, String> drawRequest(@RequestBody Map<String, Boolean> request) {
+
+        Map<String, String> response = new HashMap<>();
+
+            // Logique pour accepter la demande de nulle (par exemple, mettre fin à la partie)
+            moveService.createDraw(); // Appelez le service pour gérer la nulle
+            response.put("message", "La partie est déclarée nulle");
+
+
+        return response;
+    }
+
 
 
     @MessageMapping("/move/{gameId}")

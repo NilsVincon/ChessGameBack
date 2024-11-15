@@ -72,6 +72,11 @@ public class MoveService {
         this.currentPlayer = ColorPiece.WHITE;
     }
 
+    public void createDraw(){
+        board.initBoard();
+        this.currentPlayer = ColorPiece.WHITE;
+    }
+
 
 
     public Move updateMove(Move move) {
